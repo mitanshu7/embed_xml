@@ -14,8 +14,8 @@ from tqdm.auto import tqdm # Progress bar
 start = time()
 
 # Input folder and output file name
-data_folder = 'medrxiv-xml-dump/'
-output_file = 'medrxiv-embeddings.parquet'
+data_folder = 'biorxiv-xml-dump/'
+output_file = 'biorxiv-embeddings.parquet'
 
 # Gather XML files
 print(f"Gathering XML files from {data_folder}")
@@ -66,17 +66,22 @@ df = pd.DataFrame(columns=['id', 'vector'])
 print(f"Looping through {len(xml_files)} XML files")
 for xml_file in tqdm(xml_files):
 
-    # Extract abstract and doi
-    abstract_doi = extract_abstract_doi(xml_file)
+    try:
+        # Extract abstract and doi
+        abstract_doi = extract_abstract_doi(xml_file)
 
-    # Create embedding
-    embedding = embed(abstract_doi['abstract'])
+        # Create embedding
+        embedding = embed(abstract_doi['abstract'])
 
-    # Create a dataframe row
-    row = pd.DataFrame({'id': abstract_doi['doi'], 'vector': [embedding]})
+        # Create a dataframe row
+        row = pd.DataFrame({'id': abstract_doi['doi'], 'vector': [embedding]})
 
-    # Append the row to the DataFrame
-    df = pd.concat([df, row], ignore_index=True)
+        # Append the row to the DataFrame
+        df = pd.concat([df, row], ignore_index=True)
+
+    except Exception as e:
+        with open('bioarxiv_errors.txt', 'a') as f:
+            f.write(f"Error processing file {xml_file}: {e}\n")
 
 # Save the DataFrame to a Paquet file
 print(f"Saving DataFrame to parquet file: {output_file}")
