@@ -1,3 +1,9 @@
+# File description:
+# This script extracts abstracts and DOIs from a collection of XML files, 
+# and generates embeddings for the abstracts using a pretrained Sentence Transformer model. 
+# The script saves the embeddings and metadata to a Parquet file.
+
+
 # Import required libraries
 import pandas as pd # Data manipulation
 from bs4 import BeautifulSoup # Extract text from XML

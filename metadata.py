@@ -1,3 +1,11 @@
+# File description:
+# 1. This Python script is designed to extract metadata from a collection of XML files, which are assumed to be scientific articles from the medRxiv preprint server.
+# 2. The script uses the BeautifulSoup library to parse the XML data and extract the article's abstract, DOI, title, and authors.
+# 3. The extracted metadata is then stored in a pandas DataFrame, which is saved as a Parquet file for efficient storage and retrieval.
+# 4. The script also includes a progress bar using the tqdm library to track the progress of the metadata extraction process.
+# 5. The script is set up to handle a large number of XML files, making it suitable for processing large datasets.
+# 6. The script uses caching to improve performance by avoiding redundant computations.
+
 # Import required libraries
 import pandas as pd # Data manipulation
 from bs4 import BeautifulSoup # Extract text from XML
@@ -11,7 +19,7 @@ from functools import cache
 start = time()
 
 # Input folder and output file name
-prefix = 'med'
+prefix = 'bio'
 
 data_folder = f'{prefix}rxiv-xml-dump/'
 output_file = f'{prefix}rxiv_metadata.parquet'

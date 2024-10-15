@@ -1,10 +1,18 @@
+# File description:
+# This script merges two dataframes, one containing embeddings and the other containing metadata, on the 'id' column.
+# It then creates a new column '$meta' which is a json string of the metadata.
+# Finally, it drops the unnecessary columns and saves the merged dataframe to a parquet file.
+# The output file is compatible with Milvus, a vector database.
+
+# Import required libraries
 import pandas as pd
 import json
 
 # Declare filenames
-embeddings_file = 'medrxiv_embeddings.parquet'
-metadata_file = 'medrxiv_metadata.parquet'    
-output_file = 'medrxiv_embeddings_metadata.parquet'
+prefix = 'med'
+embeddings_file = f'{prefix}rxiv_embeddings.parquet'
+metadata_file = f'{prefix}rxiv_metadata.parquet'    
+output_file = f'{prefix}rxiv_embeddings_metadata.parquet'
 
 # Load dataframes
 embeddings = pd.read_parquet(embeddings_file)
