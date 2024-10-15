@@ -26,8 +26,8 @@ merged = pd.merge(embeddings, metadata, on='id')
 # id is the paper_id, vector is the embedding, and $meta is a json string of the metadata
 merged['$meta'] = merged[['Title', 'Authors', 'Abstract', 'URL']].apply(lambda row: json.dumps(row.to_dict()), axis=1)
 
-# Drop unnecessary columns
-merged.drop(columns=['Title', 'Abstract', 'Authors', 'URL'], inplace=True)
+# Keep neccessary columns
+merged = merged[['id', 'vector', '$meta']]
 
 # Save to parquet
 merged.to_parquet(output_file, index=False)
