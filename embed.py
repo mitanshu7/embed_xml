@@ -6,7 +6,7 @@ from glob import glob # Gather files
 import os # Folder and file creation
 from sentence_transformers import SentenceTransformer # For embedding the text
 import torch # For gpu 
-from tqdm.auto import tqdm # Progress bar
+from tqdm import tqdm # Progress bar
 
 ################################################################################
 
