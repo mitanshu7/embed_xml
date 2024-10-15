@@ -11,8 +11,7 @@ import pandas as pd # Data manipulation
 from bs4 import BeautifulSoup # Extract text from XML
 from time import time # Track time
 from glob import glob # Gather XML files
-from tqdm import tqdm # Progress bar
-from functools import cache
+import multiprocessing as mp # Parallel processing
 ################################################################################
 
 # Track time
@@ -28,7 +27,6 @@ output_file = f'{prefix}rxiv_metadata.parquet'
 print(f"Gathering XML files from {data_folder}")
 xml_files = glob(data_folder + '*.xml')
 ################################################################################
-@cache
 def extract_info(xml_file):
 
     try:
@@ -51,7 +49,6 @@ def extract_info(xml_file):
 
         # Get author names
         authors = soup.find_all('contrib', {'contrib-type':"author"})
-        # author_names = [author.find('name').get_text(separator=" ",strip=True) for author in authors]
         author_names = [res.get_text(separator=" ", strip=True) 
                 for author in authors 
                 if (res := author.find('name')) is not None]
@@ -60,10 +57,9 @@ def extract_info(xml_file):
         return {
             "id": doi,
             "Title": article_title,
-            # Convert list of authors to one string
-            "Authors": ', '.join(author_names),
+            "Authors": ', '.join(author_names), # Convert list of authors to one string
             "Abstract": abstract,
-            "URL": f"https://doi.org/{doi}"
+            "URL": f"https://doi.org/{doi}" # Construct URL from DOI
         }
     
     except Exception as e:
@@ -75,13 +71,21 @@ def extract_info(xml_file):
 
 # Extract information from XML files
 print(f"Extracting information from {len(xml_files)} XML files")
-# Skip files that result in any error
-metadata = [extract_info(xml_file) for xml_file in tqdm(xml_files) if extract_info(xml_file) is not None]
 
-# Convert to DataFrame
-metadata_df = pd.DataFrame(metadata)
+if __name__ == '__main__':
+    with mp.Pool(processes=mp.cpu_count()) as pool:
+        results = pool.map(extract_info, xml_files)
 
-# Save to parquet file
-print(f"Saving metadata to {output_file}")
-metadata_df.to_parquet(output_file, index=False)
+    # Remove None values
+    results = [result for result in results if result is not None]
+
+    # Convert list of dictionaries to DataFrame
+    df = pd.DataFrame(results)
+
+    # Save DataFrame to Parquet file
+    df.to_parquet(output_file, index=False)
+
+    # Print time taken
+    print(f"Time taken: {time() - start} seconds")
+
 

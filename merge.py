@@ -9,7 +9,7 @@ import pandas as pd
 import json
 
 # Declare filenames
-prefix = 'med'
+prefix = 'bio'
 embeddings_file = f'{prefix}rxiv_embeddings.parquet'
 metadata_file = f'{prefix}rxiv_metadata.parquet'    
 output_file = f'{prefix}rxiv_embeddings_metadata.parquet'
